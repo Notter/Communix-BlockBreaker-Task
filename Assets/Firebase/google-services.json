@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "171133160994",
+    "project_id": "communix-blockbreaker-7f971",
+    "storage_bucket": "communix-blockbreaker-7f971.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:171133160994:android:22843527c9b5e18a45447b",
+        "android_client_info": {
+          "package_name": "com.TomNeta.BlockBreaker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGE0EBNI0K7qNWOWw2H9zMHRo7szXOZ3w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
