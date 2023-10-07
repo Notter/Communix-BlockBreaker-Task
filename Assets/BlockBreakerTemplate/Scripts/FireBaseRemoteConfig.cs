@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using System;
 using System.IO;
 using UnityEngine;
+using System.Collections.Specialized;
 
-public class FireBaseRemoteConfigFetcher
+public class FireBaseRemoteConfig
 {
     [Serializable]
     public class KeyValue
@@ -18,7 +19,8 @@ public class FireBaseRemoteConfigFetcher
 
     Dictionary<string, object> defaults = new();
 
-    public FireBaseRemoteConfigFetcher()
+    // Load Default values
+    public FireBaseRemoteConfig()
     {
         string jsonFilePath = Path.Combine(Application.dataPath, "Firebase/remote_config_defaults.json");
         if (jsonFilePath == null) return;
@@ -26,11 +28,12 @@ public class FireBaseRemoteConfigFetcher
         string jsonContents = File.ReadAllText(jsonFilePath);
 
         // These are the values that are used if we haven't fetched data from the server
-        // yet, or if we ask for values that the server doesn't have:
+        // yet, or if we ask for values that the server doesn't have
         defaults = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonContents);
     }
 
-    public async Task<ConfigValue> GetParameter(string configParamater)
+    // Establish connection to Firebase remote config
+    private async Task<FirebaseRemoteConfig> ConnectToFireBaseConfig()
     {
         await FirebaseApp.CheckAndFixDependenciesAsync();
 
@@ -45,7 +48,27 @@ public class FireBaseRemoteConfigFetcher
         // Activate the fetched settings
         await mFirebaseRemoteConfig.ActivateAsync();
 
+        return mFirebaseRemoteConfig;
+    }
+
+    public async Task<ConfigValue> GetParameter(string configParamater)
+    {
+        FirebaseRemoteConfig mFirebaseRemoteConfig = await ConnectToFireBaseConfig();
+
         // Access Remote Config values
         return mFirebaseRemoteConfig.GetValue(configParamater);
+    }
+
+    public async Task<Dictionary<string, ConfigValue>> GetParameters(params string[] configParamters)
+    {
+        FirebaseRemoteConfig mFirebaseRemoteConfig = await ConnectToFireBaseConfig();
+
+        var fetchedValues = new Dictionary<string, ConfigValue>();
+
+        // Access Remote Config values and add to a dictionary by paramter name
+        for (int i = 0; i < configParamters.Length; i++)
+            fetchedValues.Add(configParamters[i], mFirebaseRemoteConfig.GetValue(configParamters[i]));
+
+        return fetchedValues;
     }
 }

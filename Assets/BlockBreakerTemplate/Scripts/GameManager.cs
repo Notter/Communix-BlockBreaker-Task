@@ -20,19 +20,20 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject GameOverScreen;                 //The game over screen game object
     [SerializeField] GameObject WinScreen;                      //The win screen game object
 
-    FireBaseRemoteConfigFetcher firebaseFetcher;
+    const string titleParamter = "Menu_Title";
+    const string subtitleParamter = "Menu_Subtitle";
 
     async void Awake()
     {
-        if (SceneManager.GetActiveScene().buildIndex != 0) return;
+        if (SceneManager.GetActiveScene().buildIndex != 0) return; // only used in Main Menu (scene ID 0)
 
-        firebaseFetcher = new FireBaseRemoteConfigFetcher();
+        var mainMenuTexts = await new FireBaseRemoteConfig().GetParameters(titleParamter, subtitleParamter);
 
-        Title.text = (await firebaseFetcher.GetParameter("Menu_Title")).StringValue;
-        Subtitle.text = (await firebaseFetcher.GetParameter("Menu_Subtitle")).StringValue;
+        Title.text = mainMenuTexts[titleParamter].StringValue;
+        Subtitle.text = mainMenuTexts[subtitleParamter].StringValue;
     }
 
-     void Start()
+    void Start()
     {
         if (Instance == null)
             Instance = this;
